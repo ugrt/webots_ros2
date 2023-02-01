@@ -30,10 +30,13 @@ from webots_ros2_driver.utils import controller_url_prefix
 
 
 def get_ros2_nodes(*args):
+    os.environ['LD_LIBRARY_PATH'] += ':/opt/ros/humble/lib/controller'
     package_dir = get_package_share_directory('webots_ros2_turtlebot_ugrt')
+    os.environ['WEBOTS_HOME'] += ':' + package_dir
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+
 
     # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
     controller_manager_timeout = ['--controller-manager-timeout', '50']
@@ -65,7 +68,7 @@ def get_ros2_nodes(*args):
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'TurtleBot3Burger'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'TurtleBot3BurgerUGRT'},
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time,
@@ -91,21 +94,38 @@ def get_ros2_nodes(*args):
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
+    zed2_tf_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        output='screen',
+        arguments=[
+            '--x', '0',
+            '--y', '0', 
+            '--z', '0.35',
+            '--roll', '0',
+            '--pitch', '0',
+            '--yaw', '0', 
+            '--frame-id', 'base_link', 
+            '--child-frame-id', 'zed2'
+        ],
+    )
+
     return [
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
         robot_state_publisher,
         turtlebot_driver,
-        footprint_publisher,
+        # footprint_publisher,
+        zed2_tf_publisher,
     ]
 
 
 def generate_launch_description():
-    package_dir = get_package_share_directory('webots_ros2_turtlebot')
+    package_dir = get_package_share_directory('webots_ros2_turtlebot_ugrt')
     world = LaunchConfiguration('world')
 
     webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world])
+        world=PathJoinSubstitution([package_dir, 'world', world])
     )
 
     ros2_supervisor = Ros2SupervisorLauncher()
@@ -122,7 +142,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
-            default_value='turtlebot3_burger_example.wbt',
+            default_value='turtlebot3_burger_example_ugrt.wbt',
             description='Choose one of the world files from `/webots_ros2_turtlebot/world` directory'
         ),
         webots,

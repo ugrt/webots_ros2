@@ -14,9 +14,19 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/ros2control.yml'
 ]))
 
-data_files.append(('share/' + package_name + '/worlds', [
-    'worlds/turtlebot3_burger_example.wbt', 'worlds/.turtlebot3_burger_example.wbproj',
+data_files.append(('share/' + package_name + '/world', [
+    'world/turtlebot3_burger_example_ugrt.wbt'
 ]))
+
+data_files.append(('share/' + package_name + '/protos', [
+    'protos/TurtleBot3BurgerUGRT.proto'
+]))
+
+data_files.append(('share/' + package_name + '/protos/meshes', [
+    'protos/meshes/wheel_shape.obj',
+    'protos/meshes/zed2.stl'
+]))
+
 data_files.append(('share/' + package_name, ['package.xml']))
 
 
@@ -27,10 +37,10 @@ setup(
     data_files=data_files,
     install_requires=['setuptools', 'launch'],
     zip_safe=True,
-    author='Cyberbotics',
-    author_email='support@cyberbotics.com',
+    # author='Cyberbotics',
+    # author_email='support@cyberbotics.com',
     author='University of Guelph Robotics',
-    author_email='ugrt@cyberbotics.com',
+    author_email='ugrt@uoguelph.ca',
     maintainer='University of Guelph Robotics',
     maintainer_email='ugrt@uoguelph.com',
     keywords=['ROS', 'Webots', 'Robot', 'Simulation', 'Examples'],

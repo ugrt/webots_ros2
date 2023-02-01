@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <robot name="TurtleBot3 Burger Webots">
     <webots>
-        <device reference="LDS-01" type="Lidar">
+        <!-- <device reference="LDS-01" type="Lidar">
             <ros>
                 <enabled>true</enabled>
                 <updateRate>5</updateRate>
@@ -10,6 +10,16 @@
                 <frameName>LDS-01</frameName>
             </ros>
         </device>
+
+        <device reference="LDS-01" type="Lidar">
+            <ros>
+                <enabled>true</enabled>
+                <updateRate>5</updateRate>
+                <topicName>/scan</topicName>
+                <alwaysOn>true</alwaysOn>
+                <frameName>LDS-01</frameName>
+            </ros>
+        </device> -->
 
         <plugin type="webots_ros2_driver::Ros2IMU">
             <enabled>true</enabled>
@@ -21,6 +31,36 @@
             <gyroName>gyro</gyroName>
             <accelerometerName>accelerometer</accelerometerName>
         </plugin>
+        
+        <!-- <plugin type="webots_ros2_driver::Ros2RangeFinder">
+            <enabled>true</enabled>
+            <updateRate>60</updateRate>
+            <width>1280</width>
+            <height>720</height>
+            <topicName>/zed2_depth"</topicName>
+            <frameName>Zed2Link</frameName>
+        </plugin> -->
+        
+        <device reference="gps" type="GPS">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+
+        <device reference="zed2_camera" type="Camera">
+            <ros>
+                <topicName>/zed_camera/rgb</topicName>
+                <frameName>zed2</frameName>
+            </ros>
+        </device>
+
+        <device reference="zed2_depth_camera" type="RangeFinder">
+            <ros>
+                <topicName>/zed_camera/depth</topicName>
+                <frameName>zed2</frameName>
+            </ros>
+        </device>
 
         <plugin type="webots_ros2_control::Ros2Control" />
 
